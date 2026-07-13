@@ -252,8 +252,16 @@ app.post('/api/contact', (req, res) => {
 });
 
 // Endpoint 6: GET /api/download-apk
-// Serves a small mock binary named FloatDock.apk to represent a complete production build download
+// Serves the uploaded FloatDock.apk file if it exists, otherwise falls back to a clean mock binary representation
 app.get('/api/download-apk', (req, res) => {
+  const filePath = path.join(process.cwd(), 'FloatDock.apk');
+  
+  if (fs.existsSync(filePath)) {
+    res.setHeader('Content-Type', 'application/vnd.android.package-archive');
+    res.setHeader('Content-Disposition', 'attachment; filename=FloatDock.apk');
+    return res.sendFile(filePath);
+  }
+  
   res.setHeader('Content-Type', 'application/vnd.android.package-archive');
   res.setHeader('Content-Disposition', 'attachment; filename=FloatDock.apk');
   
